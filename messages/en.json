@@ -1,0 +1,157 @@
+{
+  "app": {
+    "name": "UniTune",
+    "tagline": "All your music, one app."
+  },
+  "nav": {
+    "home": "Home",
+    "search": "Search",
+    "library": "Library",
+    "settings": "Settings",
+    "connections": "Connections",
+    "account": "Account",
+    "liked": "Liked Songs",
+    "playlists": "Playlists",
+    "albums": "Albums",
+    "artists": "Artists"
+  },
+  "home": {
+    "greeting": {
+      "morning": "Good morning",
+      "afternoon": "Good afternoon",
+      "evening": "Good evening",
+      "night": "Good night"
+    },
+    "sections": {
+      "continueListening": "Continue listening",
+      "recentlyPlayed": "Recently played",
+      "madeForYou": "Made for you",
+      "yourArtists": "Your artists",
+      "newReleases": "New releases"
+    },
+    "emptyConnected": "Connect a service to see personalized content.",
+    "connectButton": "Connect a service"
+  },
+  "search": {
+    "placeholder": "Search tracks, artists, albums, playlists…",
+    "hint": "Start typing to search across all connected services.",
+    "empty": "No results for \"{query}\".",
+    "filterAll": "All",
+    "filterSpotify": "Spotify",
+    "filterSoundCloud": "SoundCloud",
+    "tabs": {
+      "all": "All",
+      "tracks": "Tracks",
+      "artists": "Artists",
+      "albums": "Albums",
+      "playlists": "Playlists"
+    },
+    "soundcloud": {
+      "title": "SoundCloud",
+      "description": "The SoundCloud API is closed to new apps. Paste a SoundCloud link below to add it.",
+      "placeholder": "https://soundcloud.com/…",
+      "add": "Add"
+    }
+  },
+  "library": {
+    "title": "Your Library",
+    "tabs": {
+      "liked": "Liked Songs",
+      "playlists": "Playlists",
+      "albums": "Albums"
+    },
+    "emptyLiked": "You haven't liked any songs yet.",
+    "emptyPlaylists": "You don't have any playlists yet.",
+    "newPlaylist": "New playlist",
+    "newSuperPlaylist": "New super-playlist"
+  },
+  "player": {
+    "play": "Play",
+    "pause": "Pause",
+    "next": "Next",
+    "previous": "Previous",
+    "shuffle": "Shuffle",
+    "repeat": "Repeat",
+    "repeatOne": "Repeat one",
+    "queue": "Queue",
+    "volume": "Volume",
+    "mute": "Mute",
+    "unmute": "Unmute",
+    "like": "Like",
+    "unlike": "Unlike",
+    "nothingPlaying": "Nothing is playing",
+    "connectToPlay": "Connect a service to start listening",
+    "premiumRequired": "Spotify Premium required for full playback",
+    "previewOnly": "Playing a 30-second preview — upgrade to Spotify Premium for full tracks."
+  },
+  "queue": {
+    "title": "Queue",
+    "nowPlaying": "Now playing",
+    "upNext": "Up next",
+    "empty": "Queue is empty",
+    "clear": "Clear queue",
+    "addToQueue": "Add to queue"
+  },
+  "settings": {
+    "title": "Settings",
+    "connections": {
+      "title": "Connections",
+      "description": "Connect music services to unlock playback, search and your library.",
+      "connect": "Connect",
+      "disconnect": "Disconnect",
+      "connectedAs": "Connected as {name}",
+      "spotifyDesc": "Full playback (Premium), search and library.",
+      "soundcloudDesc": "Public embeds via Widget API. Paste track/playlist links to play."
+    },
+    "account": {
+      "title": "Account",
+      "email": "Email",
+      "signOut": "Sign out",
+      "language": "Language",
+      "theme": "Theme",
+      "themeOptions": {
+        "system": "System",
+        "light": "Light",
+        "dark": "Dark"
+      }
+    }
+  },
+  "auth": {
+    "login": {
+      "title": "Welcome to UniTune",
+      "subtitle": "Sign in with your email to get started.",
+      "email": "Email",
+      "sendLink": "Send magic link",
+      "linkSent": "Check your inbox for the magic link.",
+      "error": "Couldn't send the link. Try again."
+    }
+  },
+  "actions": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "rename": "Rename",
+    "create": "Create",
+    "add": "Add",
+    "remove": "Remove",
+    "more": "More",
+    "share": "Share",
+    "viewAll": "View all",
+    "retry": "Retry"
+  },
+  "track": {
+    "addToPlaylist": "Add to playlist",
+    "addToQueue": "Add to queue",
+    "playNext": "Play next",
+    "goToArtist": "Go to artist",
+    "goToAlbum": "Go to album",
+    "copyLink": "Copy link",
+    "openInProvider": "Open in {provider}"
+  },
+  "errors": {
+    "generic": "Something went wrong.",
+    "notFound": "Not found.",
+    "providerUnavailable": "{provider} is currently unavailable.",
+    "signInRequired": "Please sign in to continue."
+  }
+}

@@ -1,0 +1,157 @@
+{
+  "app": {
+    "name": "UniTune",
+    "tagline": "Вся твоя музыка в одном приложении."
+  },
+  "nav": {
+    "home": "Главная",
+    "search": "Поиск",
+    "library": "Медиатека",
+    "settings": "Настройки",
+    "connections": "Подключения",
+    "account": "Аккаунт",
+    "liked": "Любимые треки",
+    "playlists": "Плейлисты",
+    "albums": "Альбомы",
+    "artists": "Исполнители"
+  },
+  "home": {
+    "greeting": {
+      "morning": "Доброе утро",
+      "afternoon": "Добрый день",
+      "evening": "Добрый вечер",
+      "night": "Доброй ночи"
+    },
+    "sections": {
+      "continueListening": "Продолжить слушать",
+      "recentlyPlayed": "Недавно прослушанное",
+      "madeForYou": "Для тебя",
+      "yourArtists": "Твои исполнители",
+      "newReleases": "Новинки"
+    },
+    "emptyConnected": "Подключи сервис, чтобы увидеть персональный контент.",
+    "connectButton": "Подключить сервис"
+  },
+  "search": {
+    "placeholder": "Поиск треков, исполнителей, альбомов, плейлистов…",
+    "hint": "Начни печатать, чтобы искать по всем подключённым сервисам.",
+    "empty": "Ничего не найдено по запросу «{query}».",
+    "filterAll": "Все",
+    "filterSpotify": "Spotify",
+    "filterSoundCloud": "SoundCloud",
+    "tabs": {
+      "all": "Все",
+      "tracks": "Треки",
+      "artists": "Исполнители",
+      "albums": "Альбомы",
+      "playlists": "Плейлисты"
+    },
+    "soundcloud": {
+      "title": "SoundCloud",
+      "description": "API SoundCloud закрыт для новых приложений. Вставь ссылку, чтобы добавить трек.",
+      "placeholder": "https://soundcloud.com/…",
+      "add": "Добавить"
+    }
+  },
+  "library": {
+    "title": "Медиатека",
+    "tabs": {
+      "liked": "Любимые треки",
+      "playlists": "Плейлисты",
+      "albums": "Альбомы"
+    },
+    "emptyLiked": "Пока нет любимых треков.",
+    "emptyPlaylists": "Пока нет плейлистов.",
+    "newPlaylist": "Новый плейлист",
+    "newSuperPlaylist": "Новый супер-плейлист"
+  },
+  "player": {
+    "play": "Играть",
+    "pause": "Пауза",
+    "next": "Следующий",
+    "previous": "Предыдущий",
+    "shuffle": "Перемешать",
+    "repeat": "Повтор",
+    "repeatOne": "Повтор трека",
+    "queue": "Очередь",
+    "volume": "Громкость",
+    "mute": "Без звука",
+    "unmute": "Включить звук",
+    "like": "В любимые",
+    "unlike": "Убрать из любимых",
+    "nothingPlaying": "Ничего не играет",
+    "connectToPlay": "Подключи сервис, чтобы слушать",
+    "premiumRequired": "Для полного воспроизведения нужен Spotify Premium",
+    "previewOnly": "Играет 30-секундный фрагмент — оформи Spotify Premium для полных треков."
+  },
+  "queue": {
+    "title": "Очередь",
+    "nowPlaying": "Сейчас играет",
+    "upNext": "Далее",
+    "empty": "Очередь пуста",
+    "clear": "Очистить очередь",
+    "addToQueue": "Добавить в очередь"
+  },
+  "settings": {
+    "title": "Настройки",
+    "connections": {
+      "title": "Подключения",
+      "description": "Подключи музыкальные сервисы, чтобы получить доступ к воспроизведению, поиску и библиотеке.",
+      "connect": "Подключить",
+      "disconnect": "Отключить",
+      "connectedAs": "Подключён как {name}",
+      "spotifyDesc": "Полное воспроизведение (Premium), поиск и библиотека.",
+      "soundcloudDesc": "Публичные embed через Widget API. Вставляй ссылки на треки/плейлисты для воспроизведения."
+    },
+    "account": {
+      "title": "Аккаунт",
+      "email": "Email",
+      "signOut": "Выйти",
+      "language": "Язык",
+      "theme": "Тема",
+      "themeOptions": {
+        "system": "Системная",
+        "light": "Светлая",
+        "dark": "Тёмная"
+      }
+    }
+  },
+  "auth": {
+    "login": {
+      "title": "Добро пожаловать в UniTune",
+      "subtitle": "Войди через email, чтобы начать.",
+      "email": "Email",
+      "sendLink": "Отправить волшебную ссылку",
+      "linkSent": "Проверь почту — ссылка отправлена.",
+      "error": "Не удалось отправить ссылку. Попробуй ещё раз."
+    }
+  },
+  "actions": {
+    "save": "Сохранить",
+    "cancel": "Отмена",
+    "delete": "Удалить",
+    "rename": "Переименовать",
+    "create": "Создать",
+    "add": "Добавить",
+    "remove": "Убрать",
+    "more": "Ещё",
+    "share": "Поделиться",
+    "viewAll": "Показать все",
+    "retry": "Повторить"
+  },
+  "track": {
+    "addToPlaylist": "В плейлист",
+    "addToQueue": "В очередь",
+    "playNext": "Играть следующим",
+    "goToArtist": "К исполнителю",
+    "goToAlbum": "К альбому",
+    "copyLink": "Скопировать ссылку",
+    "openInProvider": "Открыть в {provider}"
+  },
+  "errors": {
+    "generic": "Что-то пошло не так.",
+    "notFound": "Не найдено.",
+    "providerUnavailable": "{provider} сейчас недоступен.",
+    "signInRequired": "Войди, чтобы продолжить."
+  }
+}
