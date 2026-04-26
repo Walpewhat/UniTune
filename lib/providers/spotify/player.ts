@@ -8,7 +8,12 @@ import type {
   Unsubscribe,
 } from "@/lib/providers/types";
 import type { UnifiedTrack } from "@/types/track";
-import { playOnDevice, transferPlayback, trackUri } from "./api";
+import {
+  playOnDevice,
+  setVolumeOnDevice,
+  transferPlayback,
+  trackUri,
+} from "./api";
 
 type Listener<E extends ProviderPlayerEventName> = (
   data: ProviderPlayerEvents[E],
@@ -16,12 +21,10 @@ type Listener<E extends ProviderPlayerEventName> = (
 
 const SDK_URL = "https://sdk.scdn.co/spotify-player.js";
 
-declare global {
-  interface Window {
-    onSpotifyWebPlaybackSDKReady?: () => void;
-    Spotify?: typeof Spotify;
-  }
-}
+// Window augmentation for `window.Spotify` and
+// `window.onSpotifyWebPlaybackSDKReady` is provided by
+// @types/spotify-web-playback-sdk (declared without `?`). Adding our own
+// optional version here triggers TS4114 "must have identical modifiers".
 
 let sdkPromise: Promise<void> | null = null;
 
@@ -56,12 +59,23 @@ export class SpotifyPlayer implements ProviderPlayer {
   private fallbackAudio: HTMLAudioElement | null = null;
   private listeners = new Map<ProviderPlayerEventName, Set<Listener<never>>>();
   private initialized = false;
+  // Resolved when SDK fires its "ready" event, i.e. Spotify's backend has
+  // registered our device and assigned a device_id. `sdk.connect()` returning
+  // true only means the websocket opened — the device is NOT yet addressable
+  // via /me/player/play at that point. load() must await this promise before
+  // trying to hit the Web API, otherwise deviceId is null and we fall through
+  // to the preview-URL path (which for most tracks is empty → silence).
+  private readyPromise: Promise<void> = Promise.resolve();
+  private readyResolve: (() => void) | null = null;
 
   constructor(private readonly opts: PlayerFactoryOptions) {}
 
   async init(): Promise<void> {
     if (this.initialized) return;
     this.initialized = true;
+    this.readyPromise = new Promise<void>((resolve) => {
+      this.readyResolve = resolve;
+    });
     try {
       await loadSdk();
       if (!window.Spotify) throw new Error("Spotify SDK not available");
@@ -76,24 +90,44 @@ export class SpotifyPlayer implements ProviderPlayer {
       });
 
       this.sdk.addListener("ready", ({ device_id }) => {
+        console.log("[spotify] SDK ready, device_id=", device_id);
         this.deviceId = device_id;
+        this.readyResolve?.();
         this.emit("ready", { deviceId: device_id });
       });
-      this.sdk.addListener("not_ready", () => {
+      this.sdk.addListener("not_ready", ({ device_id }) => {
+        console.warn("[spotify] SDK not_ready, device_id=", device_id);
         this.deviceId = null;
       });
-      this.sdk.addListener("initialization_error", ({ message }) =>
-        this.emit("error", { message }),
-      );
+      this.sdk.addListener("initialization_error", ({ message }) => {
+        console.error("[spotify] initialization_error:", message);
+        this.emit("error", { message });
+      });
       this.sdk.addListener("authentication_error", ({ message }) => {
+        console.error("[spotify] authentication_error:", message);
         this.emit("error", { message });
       });
       this.sdk.addListener("account_error", ({ message }) => {
+        console.error("[spotify] account_error (need Premium?):", message);
         this.opts.onRequirePremium?.();
         this.emit("error", { message });
       });
+      this.sdk.addListener("playback_error", ({ message }) => {
+        console.error("[spotify] playback_error:", message);
+        this.emit("error", { message });
+      });
       this.sdk.addListener("player_state_changed", (state) => {
-        if (!state) return;
+        if (!state) {
+          console.warn("[spotify] player_state_changed: null state (device taken over?)");
+          return;
+        }
+        console.log(
+          "[spotify] state: paused=%s pos=%d/%d track=%s",
+          state.paused,
+          state.position,
+          state.duration,
+          state.track_window?.current_track?.name,
+        );
         this.emit("stateChange", { isPlaying: !state.paused });
         this.emit("progress", {
           positionMs: state.position,
@@ -118,6 +152,23 @@ export class SpotifyPlayer implements ProviderPlayer {
     this.currentTrack = track;
     this.stopFallback();
 
+    // Wait for SDK to finish handshake with Spotify backend before trying to
+    // play. `sdk.connect() → true` only means the websocket opened; the
+    // device isn't addressable via /me/player/play until the "ready" event
+    // fires (50–500ms later). Without this race guard, a fast click after
+    // app launch hits the API with deviceId=null and falls into the
+    // preview-URL fallback (which is usually empty → silence).
+    try {
+      await Promise.race([
+        this.readyPromise,
+        new Promise<void>((_, reject) =>
+          setTimeout(() => reject(new Error("spotify_ready_timeout")), 10_000),
+        ),
+      ]);
+    } catch {
+      /* fall through — deviceId check below will branch to fallback */
+    }
+
     if (this.deviceId && this.currentToken) {
       try {
         await transferPlayback(this.currentToken, this.deviceId);
@@ -127,10 +178,20 @@ export class SpotifyPlayer implements ProviderPlayer {
     }
 
     if (!this.deviceId || !this.currentToken) {
+      console.warn(
+        "[spotify] load falling back to preview: deviceId=%s hasToken=%s",
+        this.deviceId,
+        !!this.currentToken,
+      );
       await this.loadFallback(track);
       return;
     }
     try {
+      console.log(
+        "[spotify] playing via Web API: track=%s device=%s",
+        track.providerId,
+        this.deviceId,
+      );
       await playOnDevice(
         this.currentToken,
         this.deviceId,
@@ -138,7 +199,9 @@ export class SpotifyPlayer implements ProviderPlayer {
       );
       this.startProgressTicker();
     } catch (err) {
+      console.error("[spotify] playOnDevice failed:", err);
       if (track.previewUrl) {
+        console.warn("[spotify] falling back to preview URL");
         await this.loadFallback(track);
       } else {
         throw err;
@@ -178,7 +241,23 @@ export class SpotifyPlayer implements ProviderPlayer {
       this.fallbackAudio.volume = clamped;
       return;
     }
+    // Belt-and-braces: SDK + Web API. In castLabs Electron the SDK's
+    // setVolume() does not reliably propagate to Spotify's device state
+    // (device stays at volume_percent: 0, track "plays" silently). Hitting
+    // /me/player/volume directly mutates server state so the device actually
+    // produces audible output.
     await this.sdk?.setVolume(clamped);
+    if (this.currentToken && this.deviceId) {
+      try {
+        await setVolumeOnDevice(
+          this.currentToken,
+          this.deviceId,
+          clamped * 100,
+        );
+      } catch {
+        /* non-fatal — SDK call above may still have worked */
+      }
+    }
   }
 
   async getPosition(): Promise<number> {

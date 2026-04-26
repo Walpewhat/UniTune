@@ -200,6 +200,31 @@ export async function transferPlayback(token: string, deviceId: string) {
   });
 }
 
+/**
+ * Set playback volume on a specific device via Spotify Web API.
+ *
+ * Why this exists alongside the SDK's `setVolume()`:
+ * the castLabs Electron fork ships Widevine CDM but has a known quirk where
+ * `sdk.setVolume()` does not propagate to Spotify's device state — the device
+ * stays at `volume_percent: 0` even after `sdk.setVolume(0.7)`. This direct
+ * REST call bypasses the SDK entirely and mutates server-side state, which
+ * then takes effect on the playing device.
+ *
+ * @param volumePercent  integer in [0, 100]
+ */
+export async function setVolumeOnDevice(
+  token: string,
+  deviceId: string,
+  volumePercent: number,
+) {
+  const clamped = Math.max(0, Math.min(100, Math.round(volumePercent)));
+  await spotifyFetch(
+    `/me/player/volume?volume_percent=${clamped}&device_id=${deviceId}`,
+    token,
+    { method: "PUT" },
+  );
+}
+
 export function trackUri(providerTrackId: string): string {
   return `spotify:track:${providerTrackId}`;
 }

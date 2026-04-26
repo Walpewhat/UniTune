@@ -2,8 +2,16 @@ import "server-only";
 
 import { getServerSupabase } from "@/lib/supabase/server";
 import { decryptToken, encryptToken } from "@/lib/crypto/token-cipher";
-import { getProvider } from "@/lib/providers/registry";
+import { spotifyAuth } from "@/lib/providers/spotify/auth";
+import type { ProviderAuth } from "@/lib/providers/types";
 import type { ProviderId, TokenSet } from "@/types/provider";
+
+// Server-only auth registry. Kept separate from the client-facing
+// `registry.ts` so "server-only" imports don't leak into client bundles.
+const authRegistry: Record<ProviderId, ProviderAuth | null> = {
+  spotify: spotifyAuth,
+  soundcloud: null,
+};
 
 export interface ProviderConnection {
   userId: string;
@@ -18,7 +26,17 @@ export interface ProviderConnection {
 
 const REFRESH_THRESHOLD_MS = 60_000;
 
-export async function listConnectionsForCurrentUser() {
+export interface ProviderConnectionSummary {
+  provider: ProviderId;
+  provider_user_id: string | null;
+  provider_display_name: string | null;
+  expires_at: string | null;
+  scopes: string[] | null;
+}
+
+export async function listConnectionsForCurrentUser(): Promise<
+  ProviderConnectionSummary[]
+> {
   const supabase = await getServerSupabase();
   const {
     data: { user },
@@ -30,7 +48,11 @@ export async function listConnectionsForCurrentUser() {
       "provider, provider_user_id, provider_display_name, expires_at, scopes",
     )
     .eq("user_id", user.id);
-  return data ?? [];
+  // Supabase's `.select(string)` overload returns `never[]` because it can't
+  // statically parse the column list at compile time. Runtime shape matches
+  // the explicit interface above — the cast just restores what TS should have
+  // inferred.
+  return (data ?? []) as ProviderConnectionSummary[];
 }
 
 async function getConnectionRow(userId: string, provider: ProviderId) {
@@ -71,12 +93,12 @@ export async function getProviderAccessToken(
     return decryptToken(row.access_token_encrypted);
   }
 
-  const providerImpl = getProvider(provider);
-  if (!providerImpl.auth) {
+  const authImpl = authRegistry[provider];
+  if (!authImpl) {
     return decryptToken(row.access_token_encrypted);
   }
 
-  const refreshed = await providerImpl.auth.refresh(
+  const refreshed = await authImpl.refresh(
     decryptToken(row.refresh_token_encrypted),
   );
   await saveConnection({

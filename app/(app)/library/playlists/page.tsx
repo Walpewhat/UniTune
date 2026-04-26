@@ -13,7 +13,16 @@ export default async function PlaylistsPage() {
   const { data: rows } = await supabase
     .from("super_playlists")
     .select("id, name, description, cover_path, updated_at")
-    .order("updated_at", { ascending: false });
+    .order("updated_at", { ascending: false })
+    .returns<
+      Array<{
+        id: string;
+        name: string;
+        description: string | null;
+        cover_path: string | null;
+        updated_at: string;
+      }>
+    >();
 
   const playlists = rows ?? [];
 

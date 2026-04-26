@@ -36,6 +36,8 @@
     "placeholder": "Поиск треков, исполнителей, альбомов, плейлистов…",
     "hint": "Начни печатать, чтобы искать по всем подключённым сервисам.",
     "empty": "Ничего не найдено по запросу «{query}».",
+    "providerNotConnected": "Не подключено — результаты пропущены.",
+    "providerFailed": "Ошибка запроса — результаты могут быть неполными.",
     "filterAll": "Все",
     "filterSpotify": "Spotify",
     "filterSoundCloud": "SoundCloud",
@@ -58,12 +60,21 @@
     "tabs": {
       "liked": "Любимые треки",
       "playlists": "Плейлисты",
-      "albums": "Альбомы"
+      "albums": "Альбомы",
+      "spotifyLiked": "Spotify"
     },
     "emptyLiked": "Пока нет любимых треков.",
     "emptyPlaylists": "Пока нет плейлистов.",
     "newPlaylist": "Новый плейлист",
-    "newSuperPlaylist": "Новый супер-плейлист"
+    "newSuperPlaylist": "Новый супер-плейлист",
+    "spotifyLikedTitle": "Любимые Spotify",
+    "spotifyLikedDesc": "Сохранённые треки из твоего аккаунта Spotify.",
+    "spotifyLikedError": "Не удалось загрузить любимые из Spotify.",
+    "emptySpotifyLiked": {
+      "notConnected": "Подключи Spotify, чтобы увидеть сохранённые треки.",
+      "empty": "В Spotify ещё нет сохранённых треков."
+    },
+    "connectSpotify": "Подключить Spotify"
   },
   "player": {
     "play": "Играть",
@@ -121,9 +132,20 @@
       "title": "Добро пожаловать в UniTune",
       "subtitle": "Войди через email, чтобы начать.",
       "email": "Email",
-      "sendLink": "Отправить волшебную ссылку",
-      "linkSent": "Проверь почту — ссылка отправлена.",
-      "error": "Не удалось отправить ссылку. Попробуй ещё раз."
+      "sendCode": "Получить код",
+      "codeSent": "Мы отправили 6-значный код на твой email.",
+      "codeLabel": "Код подтверждения",
+      "codeHint": "Введи 6-значный код, который мы отправили на {email}",
+      "verify": "Войти",
+      "resendCode": "Отправить ещё раз",
+      "codeExpired": "Код истёк. Запроси новый.",
+      "codeInvalid": "Неверный код. Проверь и попробуй ещё раз.",
+      "welcome": "С возвращением!",
+      "back": "Назад",
+      "error": "Не удалось войти. Попробуй ещё раз.",
+      "rateLimited": "Подожди {seconds}с перед повторной отправкой.",
+      "retryIn": "Повтор через {seconds}с",
+      "emailQuotaExceeded": "Часовой лимит email-писем исчерпан. Подожди ~1 час или используй другой способ входа."
     }
   },
   "actions": {

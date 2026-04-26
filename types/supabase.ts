@@ -7,6 +7,11 @@
  *
  * This file is intentionally permissive until you run codegen, so TypeScript
  * compiles against a fresh checkout.
+ *
+ * NOTE: Every table must include `Relationships: []` (or the actual FK list).
+ * `@supabase/supabase-js` v2.103+ narrows `Insert` / `Update` / `Row` to
+ * `never` if this field is missing, which breaks every `.insert()` /
+ * `.upsert()` / `.select()` call site with opaque errors.
  */
 export type Json =
   | string
@@ -37,6 +42,7 @@ export interface Database {
           created_at?: string;
         };
         Update: Partial<Database["public"]["Tables"]["profiles"]["Insert"]>;
+        Relationships: [];
       };
       provider_connections: {
         Row: {
@@ -62,6 +68,7 @@ export interface Database {
         Update: Partial<
           Database["public"]["Tables"]["provider_connections"]["Insert"]
         >;
+        Relationships: [];
       };
       super_playlists: {
         Row: {
@@ -85,6 +92,7 @@ export interface Database {
         Update: Partial<
           Database["public"]["Tables"]["super_playlists"]["Insert"]
         >;
+        Relationships: [];
       };
       super_playlist_tracks: {
         Row: {
@@ -110,6 +118,7 @@ export interface Database {
         Update: Partial<
           Database["public"]["Tables"]["super_playlist_tracks"]["Insert"]
         >;
+        Relationships: [];
       };
       liked_tracks: {
         Row: {
@@ -125,6 +134,7 @@ export interface Database {
         };
         Insert: Database["public"]["Tables"]["liked_tracks"]["Row"];
         Update: Partial<Database["public"]["Tables"]["liked_tracks"]["Row"]>;
+        Relationships: [];
       };
       play_history: {
         Row: {
@@ -148,11 +158,19 @@ export interface Database {
         Update: Partial<
           Database["public"]["Tables"]["play_history"]["Insert"]
         >;
+        Relationships: [];
       };
     };
-    Views: Record<string, never>;
-    Functions: Record<string, never>;
-    Enums: Record<string, never>;
-    CompositeTypes: Record<string, never>;
+    // `{ [_ in never]: never }` is the "empty record" idiom used by
+    // Supabase codegen. Unlike `Record<string, never>`, it satisfies
+    // `Record<string, GenericView>` / `Record<string, GenericFunction>`
+    // extends-checks (because a table with zero keys trivially matches
+    // any value type). Using `Record<string, never>` here makes
+    // `Database["public"]` fail to extend `GenericSchema`, which makes
+    // `.insert()` / `.upsert()` payloads collapse to `never`.
+    Views: { [_ in never]: never };
+    Functions: { [_ in never]: never };
+    Enums: { [_ in never]: never };
+    CompositeTypes: { [_ in never]: never };
   };
 }

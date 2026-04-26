@@ -41,7 +41,8 @@ export default async function LikedPage() {
       "provider, provider_track_id, title, artists, album, cover_url, duration_ms, liked_at",
     )
     .order("liked_at", { ascending: false })
-    .limit(500);
+    .limit(500)
+    .returns<LikedRow[]>();
 
   const tracks = (data ?? []).map(rowToTrack);
 

@@ -36,6 +36,8 @@
     "placeholder": "Search tracks, artists, albums, playlists…",
     "hint": "Start typing to search across all connected services.",
     "empty": "No results for \"{query}\".",
+    "providerNotConnected": "Not connected — results skipped.",
+    "providerFailed": "Provider request failed — results may be incomplete.",
     "filterAll": "All",
     "filterSpotify": "Spotify",
     "filterSoundCloud": "SoundCloud",
@@ -58,12 +60,21 @@
     "tabs": {
       "liked": "Liked Songs",
       "playlists": "Playlists",
-      "albums": "Albums"
+      "albums": "Albums",
+      "spotifyLiked": "Spotify"
     },
     "emptyLiked": "You haven't liked any songs yet.",
     "emptyPlaylists": "You don't have any playlists yet.",
     "newPlaylist": "New playlist",
-    "newSuperPlaylist": "New super-playlist"
+    "newSuperPlaylist": "New super-playlist",
+    "spotifyLikedTitle": "Spotify Liked Songs",
+    "spotifyLikedDesc": "Your saved tracks from Spotify.",
+    "spotifyLikedError": "Couldn't load Spotify liked songs.",
+    "emptySpotifyLiked": {
+      "notConnected": "Connect Spotify to see your saved songs.",
+      "empty": "You haven't saved any songs on Spotify yet."
+    },
+    "connectSpotify": "Connect Spotify"
   },
   "player": {
     "play": "Play",
@@ -121,9 +132,20 @@
       "title": "Welcome to UniTune",
       "subtitle": "Sign in with your email to get started.",
       "email": "Email",
-      "sendLink": "Send magic link",
-      "linkSent": "Check your inbox for the magic link.",
-      "error": "Couldn't send the link. Try again."
+      "sendCode": "Send code",
+      "codeSent": "We've sent a 6-digit code to your email.",
+      "codeLabel": "Verification code",
+      "codeHint": "Enter the 6-digit code we sent to {email}",
+      "verify": "Sign in",
+      "resendCode": "Resend code",
+      "codeExpired": "Code expired. Request a new one.",
+      "codeInvalid": "Invalid code. Check it and try again.",
+      "welcome": "Welcome back!",
+      "back": "Back",
+      "error": "Couldn't complete sign-in. Try again.",
+      "rateLimited": "Please wait {seconds}s before requesting a new code.",
+      "retryIn": "Retry in {seconds}s",
+      "emailQuotaExceeded": "Hourly email quota exceeded. Try again in ~1 hour or use another sign-in method."
     }
   },
   "actions": {

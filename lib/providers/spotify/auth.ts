@@ -28,18 +28,17 @@ export function generateState(): string {
   return base64UrlEncode(crypto.randomBytes(24));
 }
 
-function getClientCreds() {
+function getClientId(): string {
   const clientId = process.env.SPOTIFY_CLIENT_ID;
-  const clientSecret = process.env.SPOTIFY_CLIENT_SECRET;
-  if (!clientId || !clientSecret) {
-    throw new Error("Spotify credentials missing. See .env.example.");
+  if (!clientId) {
+    throw new Error("SPOTIFY_CLIENT_ID missing. See .env.example.");
   }
-  return { clientId, clientSecret };
+  return clientId;
 }
 
 export const spotifyAuth: ProviderAuth = {
   buildAuthUrl({ state, codeChallenge, redirectUri }) {
-    const { clientId } = getClientCreds();
+    const clientId = getClientId();
     const params = new URLSearchParams({
       response_type: "code",
       client_id: clientId,
@@ -56,7 +55,7 @@ export const spotifyAuth: ProviderAuth = {
   },
 
   async exchangeCode({ code, codeVerifier, redirectUri }) {
-    const { clientId, clientSecret } = getClientCreds();
+    const clientId = getClientId();
     const body = new URLSearchParams({
       grant_type: "authorization_code",
       code,
@@ -69,9 +68,6 @@ export const spotifyAuth: ProviderAuth = {
       method: "POST",
       headers: {
         "Content-Type": "application/x-www-form-urlencoded",
-        Authorization: `Basic ${Buffer.from(
-          `${clientId}:${clientSecret}`,
-        ).toString("base64")}`,
       },
       body,
       cache: "no-store",
@@ -120,7 +116,7 @@ export const spotifyAuth: ProviderAuth = {
   },
 
   async refresh(refreshToken) {
-    const { clientId, clientSecret } = getClientCreds();
+    const clientId = getClientId();
     const body = new URLSearchParams({
       grant_type: "refresh_token",
       refresh_token: refreshToken,
@@ -130,9 +126,6 @@ export const spotifyAuth: ProviderAuth = {
       method: "POST",
       headers: {
         "Content-Type": "application/x-www-form-urlencoded",
-        Authorization: `Basic ${Buffer.from(
-          `${clientId}:${clientSecret}`,
-        ).toString("base64")}`,
       },
       body,
       cache: "no-store",

@@ -120,5 +120,12 @@ export interface MusicProvider {
   readonly capabilities: ProviderCapabilities;
   readonly auth: ProviderAuth | null;
   readonly api: ProviderApi;
+  /**
+   * Whether the provider is visible in the UI. Set to `false` to hide
+   * connection cards, search filter chips, paste cards, etc. The provider
+   * can still be referenced by id in stored connections and API routes —
+   * this only controls UI surfaces that enumerate providers.
+   */
+  readonly enabled: boolean;
   createPlayer(opts: PlayerFactoryOptions): ProviderPlayer;
 }

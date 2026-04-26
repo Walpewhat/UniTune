@@ -9,7 +9,6 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { TrackList } from "@/components/track/TrackList";
 import { ProviderBadge } from "@/components/track/ProviderBadge";
-import { SoundCloudPasteCard } from "./SoundCloudPasteCard";
 import { SEARCH_DEBOUNCE_MS } from "@/lib/constants";
 import { listProviders } from "@/lib/providers/registry";
 import type { ProviderId } from "@/types/provider";
@@ -21,7 +20,7 @@ import type { UnifiedArtist } from "@/types/artist";
 import type { UnifiedPlaylist } from "@/types/playlist";
 import Image from "next/image";
 import Link from "next/link";
-import { Music2, Search as SearchIcon } from "lucide-react";
+import { Music2, Search as SearchIcon, Loader2, AlertCircle } from "lucide-react";
 
 interface SearchResponse {
   q: string;
@@ -91,6 +90,11 @@ export function SearchView({ initialQuery }: { initialQuery: string }) {
       data.artists.length > 0 ||
       data.playlists.length > 0);
 
+  // Surface provider-level failures (e.g. token expired, rate limit) so the
+  // user understands why results might be partial / empty instead of silently
+  // returning nothing.
+  const providerErrors = (data?.providers ?? []).filter((p) => !p.ok);
+
   return (
     <div className="mx-auto w-full max-w-6xl space-y-6 px-6 py-6">
       <div className="flex flex-col gap-3">
@@ -100,9 +104,12 @@ export function SearchView({ initialQuery }: { initialQuery: string }) {
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder={t("placeholder")}
-            className="h-11 pl-9"
+            className="h-11 pl-9 pr-9"
             autoFocus
           />
+          {isFetching && debounced.trim() && (
+            <Loader2 className="pointer-events-none absolute right-3 top-1/2 size-4 -translate-y-1/2 animate-spin text-muted-foreground" />
+          )}
         </div>
         <div className="flex items-center gap-2">
           <FilterChip
@@ -130,7 +137,25 @@ export function SearchView({ initialQuery }: { initialQuery: string }) {
         </div>
       </div>
 
-      <SoundCloudPasteCard />
+      {providerErrors.length > 0 && (
+        <Card className="border-amber-500/30 bg-amber-500/5">
+          <CardContent className="flex items-start gap-2 p-3 text-sm">
+            <AlertCircle className="mt-0.5 size-4 shrink-0 text-amber-500" />
+            <div className="space-y-0.5">
+              {providerErrors.map((p) => (
+                <p key={p.provider}>
+                  <span className="font-medium capitalize">{p.provider}:</span>{" "}
+                  <span className="text-muted-foreground">
+                    {p.error === "not_connected"
+                      ? t("providerNotConnected")
+                      : (p.error ?? t("providerFailed"))}
+                  </span>
+                </p>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       {!debounced.trim() && (
         <Card className="border-dashed">

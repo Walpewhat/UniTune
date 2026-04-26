@@ -1,0 +1,65 @@
+appId: com.walpewhat.unitune
+productName: UniTune
+copyright: Copyright © 2026 Walpewhat
+
+directories:
+  output: dist
+  buildResources: assets
+
+asar: true
+
+# Pull Electron binaries from castLabs' fork, not electron/electron. The
+# stock electron-builder mirror has no v41.1.1+wvcus release — that tag
+# only exists on github.com/castlabs/electron-releases. URL shape matches
+# the castLabs naming: <mirror>/v<version>/electron-v<version>-<plat>-<arch>.zip.
+# customDir is hardcoded because electron-builder 25.x does not template
+# {version} inside this field (literal "v{version}" leaks into the URL).
+# Keep this in sync with the electron pin in package.json.
+electronDownload:
+  mirror: https://github.com/castlabs/electron-releases/releases/download/
+  customDir: v41.1.1+wvcus
+
+# VMP-sign the packaged app using castLabs EVS. Required for Spotify's
+# Widevine DRM to accept our runtime — without it, /widevine-license
+# returns 500 and playback never starts. See scripts/vmp-sign.js for
+# prerequisites (Python + castlabs-evs + one-time signup).
+afterPack: scripts/vmp-sign.js
+
+files:
+  - dist-electron/**
+  - package.json
+  - "!**/*.map"
+  - "!**/*.ts"
+  - "!**/tsconfig.json"
+
+extraResources:
+  - from: .next/standalone
+    to: app/.next/standalone
+    filter:
+      - "**/*"
+  - from: .next/static
+    to: app/.next/standalone/.next/static
+    filter:
+      - "**/*"
+  - from: public
+    to: app/.next/standalone/public
+    filter:
+      - "**/*"
+  - from: .env.production
+    to: app/.env.production
+
+win:
+  target:
+    - target: nsis
+      arch:
+        - x64
+  artifactName: ${productName}-Setup-${version}.${ext}
+
+nsis:
+  oneClick: false
+  perMachine: false
+  allowToChangeInstallationDirectory: true
+  createDesktopShortcut: true
+  createStartMenuShortcut: true
+  shortcutName: UniTune
+  artifactName: ${productName}-Setup-${version}.${ext}

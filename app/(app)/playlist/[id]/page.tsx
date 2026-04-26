@@ -46,7 +46,15 @@ export default async function SuperPlaylistPage({ params }: PageProps) {
     .from("super_playlists")
     .select("id, name, description, cover_path, is_public, created_at, updated_at")
     .eq("id", id)
-    .maybeSingle();
+    .maybeSingle<{
+      id: string;
+      name: string;
+      description: string | null;
+      cover_path: string | null;
+      is_public: boolean;
+      created_at: string;
+      updated_at: string;
+    }>();
 
   if (!playlist) notFound();
 
@@ -56,7 +64,8 @@ export default async function SuperPlaylistPage({ params }: PageProps) {
       "id, provider, provider_track_id, title, artists, album, cover_url, duration_ms, position",
     )
     .eq("playlist_id", id)
-    .order("position", { ascending: true });
+    .order("position", { ascending: true })
+    .returns<TrackRow[]>();
 
   const tracks = (trackRows ?? []).map(rowToTrack);
 

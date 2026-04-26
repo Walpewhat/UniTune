@@ -40,7 +40,7 @@ export async function POST(request: Request) {
         description: body.data.description ?? null,
       })
       .select("id")
-      .single();
+      .single<{ id: string }>();
     if (error) throw error;
     return NextResponse.json({ id: data.id }, { status: 201 });
   } catch (err) {

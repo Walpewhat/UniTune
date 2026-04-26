@@ -1,271 +1,171 @@
-<div align="center">
+# UniTune
 
-# 🎵 UniTune
+**All your music, one app.** UniTune is a cross-platform music aggregator built
+with Next.js 15 that unifies Spotify and SoundCloud into a single, elegant
+player. Search once, play anywhere, and build super-playlists that mix tracks
+from multiple services.
 
-### Production-ready музыкальный агрегатор
-
-**⚠️ ПРОЕКТ В АКТИВНОЙ РАЗРАБОТКЕ — не рекомендуется для продакшн-использования**
-
-[![Status](https://img.shields.io/badge/status-in%20development-orange?style=flat-square)](https://github.com/Walpewhat/UniTune)
-[![Next.js](https://img.shields.io/badge/Next.js-15-black?style=flat-square&logo=next.js)](https://nextjs.org/)
-[![React](https://img.shields.io/badge/React-19-61DAFB?style=flat-square&logo=react)](https://react.dev/)
-[![TypeScript](https://img.shields.io/badge/TypeScript-strict-3178C6?style=flat-square&logo=typescript)](https://www.typescriptlang.org/)
-[![Supabase](https://img.shields.io/badge/Supabase-auth%20%2B%20db-3ECF8E?style=flat-square&logo=supabase)](https://supabase.com/)
-
-Единый плеер и библиотека для **Spotify** и **SoundCloud** в одном интерфейсе.
-
-</div>
+> **Status:** MVP. Spotify (full) + SoundCloud (public URLs via Widget API).
+> Yandex Music, YouTube Music and Apple Music are on the roadmap.
 
 ---
 
-## 📋 Содержание
+## Features
 
-- [Возможности](#-возможности)
-- [Стек технологий](#-стек-технологий)
-- [Требования](#-требования)
-- [Быстрый старт](#-быстрый-старт)
-- [Настройка провайдеров](#-настройка-провайдеров)
-- [Переменные окружения](#-переменные-окружения)
-- [Архитектура](#-архитектура)
-- [Известные ограничения](#-известные-ограничения)
-- [Roadmap](#-roadmap)
-
----
-
-## ✨ Возможности
-
-| Функция | Статус |
-|---|---|
-| 🔐 Авторизация через Supabase (magic link) | ✅ Готово |
-| 🎧 Spotify — полное воспроизведение (Premium) | ✅ Готово |
-| 🎧 Spotify — 30-сек превью (Free) | ✅ Готово |
-| ☁️ SoundCloud — воспроизведение по URL | ✅ Готово |
-| 🔍 Унифицированный поиск по провайдерам | ✅ Готово |
-| 📚 Библиотека (лайки, плейлисты, альбомы) | ✅ Готово |
-| 🎼 Супер-плейлисты (треки из разных сервисов) | ✅ Готово |
-| 🔀 Shuffle, Repeat, очередь | ✅ Готово |
-| 📱 PWA — установка как приложение | ✅ Готово |
-| 🌍 Мультиязычность (ru / en) | ✅ Готово |
-| ⌨️ Глобальный поиск ⌘K | ✅ Готово |
-| 🍎 Apple Music | 🔜 Планируется |
-| 🎵 Яндекс Музыка | 🔜 Планируется |
+- 🎧 Unified player across providers with short cross-fade on transitions
+- 🔎 Single search that queries every connected provider in parallel
+- ❤️ Liked songs and super-playlists stored in Supabase (RLS-protected)
+- 🖼️ Modern Spotify-style UI built on Tailwind v4 + shadcn/ui + Radix
+- ⌨️ ⌘K command palette, full keyboard navigation
+- 📱 Installable PWA with MediaSession controls
+- 🌐 i18n: English + Russian out of the box
+- 🔐 OAuth tokens encrypted at rest with AES-256-GCM
 
 ---
 
-## 🛠 Стек технологий
+## Known limitations
 
-**Frontend**
-- [Next.js 15](https://nextjs.org/) — App Router, RSC, typedRoutes
-- [React 19](https://react.dev/) + TypeScript (strict mode)
-- [Tailwind CSS v4](https://tailwindcss.com/) + [shadcn/ui](https://ui.shadcn.com/) + [Radix UI](https://www.radix-ui.com/)
-- [Zustand](https://zustand-demo.pmnd.rs/) — стейт-менеджмент
-- [TanStack Query](https://tanstack.com/query) — серверный стейт
-- [next-intl](https://next-intl-docs.vercel.app/) — i18n (ru/en)
-
-**Backend / Инфраструктура**
-- [Supabase](https://supabase.com/) — PostgreSQL, Auth, RLS
-- [Serwist](https://serwist.pages.dev/) — PWA / Service Worker
-- AES-256-GCM — шифрование OAuth-токенов
-
-**Музыкальные провайдеры**
-- Spotify Web API + Web Playback SDK
-- SoundCloud oEmbed + Widget API
+1. **Spotify Premium is required for full playback.** Free accounts get 30-second
+   previews via the `preview_url` fallback.
+2. **SoundCloud search is not available.** SoundCloud closed its developer
+   program to new registrations in 2021 — you can paste any public SoundCloud
+   URL on the Search page to play it via their public Widget API.
+3. **Cross-fade is volume-only** between providers. There is no gapless audio
+   mixing because Spotify and SoundCloud don’t expose raw PCM.
+4. **Yandex Music and YouTube Music** are not included in the MVP — neither has
+   a public official API. We will not ship unofficial-API integrations.
 
 ---
 
-## 📦 Требования
-
-Перед установкой убедитесь, что у вас есть:
-
-- **Node.js** >= 20.x ([скачать](https://nodejs.org/))
-- **npm** >= 10.x (идёт в комплекте с Node.js)
-- Аккаунт **Supabase** (бесплатный) — [supabase.com](https://supabase.com)
-- Аккаунт разработчика **Spotify** — [developer.spotify.com](https://developer.spotify.com/dashboard)
-
----
-
-## 🚀 Быстрый старт
-
-### 1. Клонируйте репозиторий
+## Quick start
 
 ```bash
-git clone https://github.com/Walpewhat/UniTune.git
-cd UniTune
-```
-
-### 2. Установите зависимости
-
-```bash
+# 1. Install deps (Node 20+)
 npm install
-```
 
-### 3. Настройте переменные окружения
-
-```bash
+# 2. Copy env vars and fill them in (see sections below)
 cp .env.example .env.local
-```
 
-Откройте `.env.local` и заполните все значения (см. [раздел ниже](#-переменные-окружения)).
+# 3. Apply Supabase schema (one-time, see DEPLOYMENT.md for details)
+#    psql "$SUPABASE_DB_URL" -f lib/supabase/schema.sql
 
-### 4. Настройте базу данных Supabase
-
-1. Войдите в [app.supabase.com](https://app.supabase.com) и создайте новый проект
-2. Перейдите в **SQL Editor**
-3. Вставьте и выполните содержимое файла `lib/supabase/schema.sql`
-
-### 5. Запустите приложение
-
-```bash
+# 4. Run the dev server
 npm run dev
+# → http://localhost:3000
 ```
-
-Откройте [http://localhost:3000](http://localhost:3000) в браузере.
 
 ---
 
-## 🔑 Настройка провайдеров
+## Registering the required services
 
-### Spotify
+### 1. Supabase (auth + database)
 
-1. Перейдите на [developer.spotify.com/dashboard](https://developer.spotify.com/dashboard)
-2. Нажмите **Create app**
-3. Заполните:
-   - **App name**: UniTune (или любое)
-   - **Redirect URI**: `http://localhost:3000/api/auth/spotify/callback`
-   - **APIs used**: поставьте галочку на **Web API** и **Web Playback SDK**
-4. Скопируйте **Client ID** и **Client Secret** в `.env.local`
+1. Create a free project at <https://supabase.com/dashboard>.
+2. **Settings → API**: copy `Project URL`, `anon public`, and `service_role` →
+   put them into `.env.local` as `NEXT_PUBLIC_SUPABASE_URL`,
+   `NEXT_PUBLIC_SUPABASE_ANON_KEY`, and `SUPABASE_SERVICE_ROLE_KEY`.
+3. **Authentication → Providers**: enable **Email** (magic-link). Optionally
+   enable Google / GitHub. Disable “Confirm email” for a smoother dev flow.
+4. **SQL Editor**: paste the contents of `lib/supabase/schema.sql` and run it.
+   This creates `profiles`, `provider_connections`, `super_playlists`,
+   `super_playlist_tracks`, `liked_tracks`, `play_history`, and their RLS
+   policies.
+5. **Storage**: a `playlist-covers` bucket is created by the SQL above.
 
-> 💡 Для деплоя добавьте также продакшн-URL в Redirect URIs, например:  
-> `https://your-app.vercel.app/api/auth/spotify/callback`
+### 2. Spotify (Web API + Web Playback SDK)
 
-### SoundCloud
+1. Go to <https://developer.spotify.com/dashboard> and sign in.
+2. Click **Create app**:
+   - *App name*: `UniTune (local)`
+   - *App description*: anything
+   - *Redirect URI*: `http://localhost:3000/api/auth/spotify/callback`
+   - *APIs used*: tick **Web API** and **Web Playback SDK**
+   - Accept the developer terms
+3. Copy the **Client ID** and **Client Secret** from the app dashboard into
+   `.env.local`.
+4. (Production) Add your production redirect URI
+   (`https://your-domain/api/auth/spotify/callback`) in the Spotify dashboard.
 
-SoundCloud не требует ключей — используется публичный oEmbed API.  
-Просто вставляйте ссылки на треки прямо в поиск (например, `https://soundcloud.com/artist/track`).
+### 3. SoundCloud (optional — search)
 
----
+SoundCloud closed new developer registrations in 2021, so UniTune works out of
+the box using their **public oEmbed + Widget API** (no key required): paste any
+public SoundCloud URL on the Search page.
 
-## 🔧 Переменные окружения
+If you have a legacy `SOUNDCLOUD_CLIENT_ID`, set it in `.env.local` to unlock
+aggregated SoundCloud search.
 
-Создайте `.env.local` на основе `.env.example`:
+### 4. Encryption key
 
-```env
-# Supabase
-NEXT_PUBLIC_SUPABASE_URL=https://ваш-проект.supabase.co
-NEXT_PUBLIC_SUPABASE_ANON_KEY=ваш-anon-ключ
-SUPABASE_SERVICE_ROLE_KEY=ваш-service-role-ключ
+Generate a 32-byte base64 key for AES-256-GCM token encryption:
 
-# Spotify
-SPOTIFY_CLIENT_ID=ваш-client-id
-SPOTIFY_CLIENT_SECRET=ваш-client-secret
-
-# Шифрование OAuth-токенов (32 байта в hex)
-# Генерация: openssl rand -hex 32
-ENCRYPTION_KEY=ваш-ключ-шифрования
-
-# URL приложения
-NEXT_PUBLIC_APP_URL=http://localhost:3000
-```
-
-Для генерации `ENCRYPTION_KEY`:
 ```bash
-openssl rand -hex 32
+node -e "console.log(require('crypto').randomBytes(32).toString('base64'))"
 ```
 
+Put the output into `ENCRYPTION_KEY`. **Never rotate this value after users
+have connected providers**, or their stored tokens will become unreadable.
+
 ---
 
-## 🏗 Архитектура
+## Architecture
 
 ```
-UniTune/
-├── app/                    # Next.js App Router
-│   ├── (app)/             # Авторизованная зона (auth-гейт)
-│   │   ├── home/          # Главная страница
-│   │   ├── search/        # Поиск
-│   │   ├── library/       # Библиотека
-│   │   ├── album/         # Страница альбома
-│   │   ├── artist/        # Страница артиста
-│   │   └── playlist/      # Супер-плейлист
-│   ├── api/               # API Routes
-│   │   ├── auth/spotify/  # PKCE OAuth flow
-│   │   ├── search/        # Унифицированный поиск
-│   │   ├── home/          # Агрегация для главной
-│   │   └── providers/     # Refresh токенов
-│   └── login/             # Страница входа
-├── lib/
-│   ├── providers/         # Абстракция музыкальных провайдеров
-│   ├── supabase/          # Клиент, схема БД, хелперы
-│   ├── crypto/            # AES-256-GCM шифрование токенов
-│   └── stores/            # Zustand: player, queue, ui
-├── components/
-│   ├── player/            # BottomPlayer, QueuePanel
-│   ├── layout/            # Sidebar, TopBar, AppShell
-│   └── ui/                # shadcn/ui компоненты
-└── messages/              # Локализация (ru.json, en.json)
+app/                       # Next.js 15 App Router
+  (app)/                   # authed layout with sidebar + bottom player
+  (auth)/                  # public login pages
+  api/                     # server routes (OAuth, search, library)
+components/                # UI + player + layout + providers
+lib/
+  providers/               # MusicProvider abstraction (Spotify, SoundCloud)
+  player/                  # PlayerController singleton + crossfade
+  supabase/                # SSR client, middleware, schema + RLS
+  crypto/                  # AES-256-GCM token cipher
+  i18n/                    # next-intl config
+stores/                    # Zustand stores (player, queue, UI)
+messages/                  # en.json + ru.json
+types/                     # UnifiedTrack, UnifiedAlbum, …
 ```
 
-**Паттерн провайдеров** — для добавления нового музыкального сервиса достаточно реализовать интерфейс `MusicProvider`:
-
-```typescript
-interface MusicProvider {
-  auth: ProviderAuth
-  api: ProviderAPI
-  createPlayer: () => ProviderPlayer
-}
-```
-
-UI остаётся неизменным.
+The core abstraction is the `MusicProvider` interface in
+`lib/providers/types.ts`. Every provider exposes the same `auth`, `api`, and
+`createPlayer` surface, so adding Apple Music, Yandex Music, etc. does not
+require touching the UI.
 
 ---
 
-## ⚠️ Известные ограничения
+## Scripts
 
-Это не баги, а осознанные архитектурные решения, подробно описанные в документации:
-
-| Ограничение | Причина |
-|---|---|
-| Spotify Premium обязателен для полного воспроизведения | Web Playback SDK — только для Premium |
-| Free-аккаунт Spotify → только 30-сек превью | Ограничение API Spotify |
-| Поиск по SoundCloud отключён | Dev Program закрыт с 2021 года |
-| SoundCloud — только вставка по URL | Единственный публичный способ |
-| Cross-fade = volume ramp, не gapless | SDK не поддерживает gapless mixing |
-| Яндекс Музыка / YouTube Music не поддерживаются | Нет официальных API |
+| Script                | What it does                                  |
+|-----------------------|-----------------------------------------------|
+| `npm run dev`         | Next dev server on :3000                      |
+| `npm run build`       | Production build (with Serwist PWA)           |
+| `npm start`           | Run the production server                     |
+| `npm run lint`        | ESLint                                        |
+| `npm run typecheck`   | TypeScript (strict) type-check                |
+| `npm run db:types`    | Regenerate `types/supabase.ts` from remote DB |
 
 ---
 
-## 📈 Roadmap
+## Tech stack
 
-- [ ] Apple Music интеграция
-- [ ] Яндекс Музыка (если появится официальный API)
-- [ ] Collaborative супер-плейлисты
-- [ ] Last.fm scrobbling
-- [ ] Экспорт плейлистов между провайдерами
-- [ ] Mobile-приложение (React Native)
+Next.js 15 (App Router, Server Actions, RSC) · React 19 · TypeScript (strict) ·
+Tailwind v4 · shadcn/ui · Radix UI · lucide-react · Zustand · TanStack Query v5 ·
+Supabase (auth, Postgres, storage) · next-intl · @serwist/next · Zod.
 
 ---
 
-## 🤝 Участие в разработке
+## Post-MVP roadmap
 
-Проект открыт для контрибьюций! Если хотите помочь:
-
-1. Fork репозитория
-2. Создайте ветку: `git checkout -b feature/название-фичи`
-3. Сделайте коммит: `git commit -m 'Add: описание изменения'`
-4. Push: `git push origin feature/название-фичи`
-5. Откройте Pull Request
-
----
-
-## 📄 Лицензия
-
-MIT © [Walpewhat](https://github.com/Walpewhat)
+- Apple Music via MusicKit JS (official SDK)
+- Lyrics via Musixmatch (paid API)
+- Cross-platform playlist import with ISRC matching
+- Electron/Tauri desktop build (PWA covers most of the need today)
+- Super-playlist public sharing
+- Mobile app on React Native re-using `lib/providers/*`
 
 ---
 
-<div align="center">
+## License
 
-**⚠️ Проект находится в активной разработке. API и структура могут меняться.**
-
-Если нашли баг или есть идея — [открывайте Issue](https://github.com/Walpewhat/UniTune/issues)!
-
-</div>
+Source-available for personal use. See `LICENSE` (to be added).

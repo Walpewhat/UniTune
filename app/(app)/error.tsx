@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 
@@ -33,7 +34,7 @@ export default function AppRouteError({
               Try again
             </Button>
             <Button asChild>
-              <a href="/">Back to Home</a>
+              <Link href="/">Back to Home</Link>
             </Button>
           </div>
         </CardContent>

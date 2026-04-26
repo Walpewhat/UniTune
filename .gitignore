@@ -15,6 +15,7 @@ next-env.d.ts
 # Production
 build/
 dist/
+dist-electron/
 
 # Misc
 .DS_Store
@@ -32,6 +33,7 @@ yarn-error.log*
 .env.local
 .env.development.local
 .env.test.local
+.env.production
 .env.production.local
 
 # Vercel
@@ -51,6 +53,10 @@ public/workbox-*.js.map
 # IDE
 .vscode/
 .idea/
+.claude/
 
 # OS
 *.log
+
+# Stray
+/npm

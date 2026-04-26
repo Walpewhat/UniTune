@@ -65,18 +65,37 @@ export function HomeFeed() {
 
   return (
     <div className="space-y-10">
-      <QuickGrid tracks={sections.flatMap((s) => s.tracks).slice(0, 6)} />
+      <QuickGrid tracks={dedupeByUid(sections.flatMap((s) => s.tracks)).slice(0, 6)} />
       {sections.map((s) => (
         <section key={`${s.provider}-${s.title}`} className="space-y-3">
           <div className="flex items-center gap-2">
             <ProviderBadge provider={s.provider} />
             <h2 className="text-lg font-semibold tracking-tight">{s.title}</h2>
           </div>
-          <TrackList tracks={s.tracks} showAlbum={false} />
+          <TrackList tracks={dedupeByUid(s.tracks)} showAlbum={false} />
         </section>
       ))}
     </div>
   );
+}
+
+/**
+ * Collapse duplicate tracks by `uid`, keeping the first occurrence.
+ *
+ * Providers like Spotify's "recently played" return one entry per listen, so
+ * repeatedly playing the same song produces several identical entries in a
+ * row. React would then warn about duplicate keys and the UI would show the
+ * same row five times in a row, which is never what the user wants.
+ */
+function dedupeByUid(tracks: UnifiedTrack[]): UnifiedTrack[] {
+  const seen = new Set<string>();
+  const out: UnifiedTrack[] = [];
+  for (const t of tracks) {
+    if (seen.has(t.uid)) continue;
+    seen.add(t.uid);
+    out.push(t);
+  }
+  return out;
 }
 
 function QuickGrid({ tracks }: { tracks: UnifiedTrack[] }) {
